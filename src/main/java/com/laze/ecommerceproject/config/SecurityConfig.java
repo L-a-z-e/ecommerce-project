@@ -1,0 +1,39 @@
+package com.laze.ecommerceproject.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+// Spring Security의 웹 보안 설정 활성화
+@EnableWebSecurity
+public class SecurityConfig {
+
+    // @Bean : 이 메소드가 반환하는 인스턴스를 Spring Container가 관리하도록 등록
+    // 다른 곳에서 PasswordEncoder 주입 받아서 사용 가능
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // BCrypt 는 현재 가장 널리 사용되는 안전한 해시 알고리즘
+        return new BCryptPasswordEncoder();
+    }
+
+    // SecurityFilterChain => HTTP 보안 구성
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // Cross-Site RequestForgery 보호 기능 비활성화
+        // REST API 서버는 보통 세션 대신 토큰을 사용하므로 CSRF 보호가 필요 없는 경우가 많음
+        http.csrf(csrf -> csrf.disable())
+                // http 요청에 대한 접근 권한 설정
+                // antMatchers 는 과거 방식 => Spring Security 5.x 까지 사용됨 패턴(*, **, ?)을 사용하여 URL 경로를 매칭하던 방식
+                // requestMatchers => Spring Security 6.x 부터 사용됨 단순 경로 뿐만 아니라 Get, Post, 까지 조합하여 규칙을 만들 수 있음
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers("/api/users/signup").permitAll()
+                        .anyRequest().authenticated()
+                );
+        return http.build();
+    }
+}
