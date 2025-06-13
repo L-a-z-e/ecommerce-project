@@ -1,13 +1,12 @@
 package com.laze.ecommerceproject.controller;
 
+import com.laze.ecommerceproject.controller.dto.LoginRequest;
+import com.laze.ecommerceproject.controller.dto.LoginResponse;
 import com.laze.ecommerceproject.controller.dto.SignUpRequest;
 import com.laze.ecommerceproject.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 // REST API를 처리하는 Controller임을 나타냄
 // 각 메소드의 반환 값은 자동으로 JSON 형태로 변환됨
@@ -29,5 +28,15 @@ public class UserController {
         userService.signUp(request);
 
         return "회원가입 성공!";
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+        return userService.login(request);
+    }
+
+    @GetMapping("/me")
+    public String getMyInfo() {
+        return "내 정보 조회 성공";
     }
 }
