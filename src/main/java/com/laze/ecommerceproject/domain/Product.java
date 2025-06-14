@@ -20,7 +20,7 @@ public class Product {
     private String productName;
 
     @Column(nullable = false)
-    private int price;
+    private Long price;
 
     @Column(nullable = false)
     private int stock;
@@ -30,4 +30,11 @@ public class Product {
     // DDL 생성 시 컬럼 타입 명시적으로 jsonb로 지정
     @Column(columnDefinition = "jsonb")
     private String attributes;
+
+    public Product(String productName, Long price, int stock, String attributes) {
+        this.productName = productName;
+        this.price = price;
+        this.stock = stock;
+        this.attributes = attributes;
+    }
 }

@@ -7,7 +7,7 @@ import com.laze.ecommerceproject.controller.dto.SignUpRequest;
 import com.laze.ecommerceproject.domain.User;
 import com.laze.ecommerceproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -58,7 +58,7 @@ public class UserService implements UserDetailsService {
         }
 
         // 3. 로그인 성공 (JWT 생성 => 반환)
-        String accessToken = jwtUtil.createAccessToken(user.getEmail());
+        String accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole());
 
         return new LoginResponse(accessToken);
     }
@@ -74,7 +74,7 @@ public class UserService implements UserDetailsService {
                 .map(user -> new org.springframework.security.core.userdetails.User(
                         user.getEmail(),
                         user.getPassword(),
-                        Collections.emptyList()
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다. email: " + email));
     }

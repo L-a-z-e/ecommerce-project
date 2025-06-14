@@ -32,9 +32,15 @@ public class User {
     @Column(name = "point")
     private int point = 0; // 기본값 지정
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
+
     public User(String username, String password, String email){
         this.username = username;
         this.password = password;
         this.email = email;
+        this.role = UserRole.USER;
     }
+
 }

@@ -1,5 +1,6 @@
 package com.laze.ecommerceproject.config;
 
+import com.laze.ecommerceproject.domain.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -24,12 +25,13 @@ public class JwtUtil {
         this.accessTokenValidityInMilliseconds = expiration * 1000;
     }
 
-    public String createAccessToken(String email) {
+    public String createAccessToken(String email, UserRole role) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
 
         return Jwts.builder()
                 .subject(email) // 토큰의 주체 (email 혹은 id)
+                .claim("role", role.name())
                 .issuedAt(now)
                 .expiration(validity)
                 .signWith(secretKey)
@@ -59,5 +61,14 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+    }
+
+    public String getRoleFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(this.secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
     }
 }
