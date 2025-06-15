@@ -28,5 +28,15 @@ public class CartItem {
     private Product product;
 
     @Column(nullable = false)
-    private int qunatity;
+    private int quantity;
+
+    public CartItem(User user, Product product, int quantity) {
+        this.user = user;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public void addQuantity(int quantity) {
+        this.quantity += quantity;
+    }
 }
