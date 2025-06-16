@@ -58,4 +58,39 @@ public class CartService {
         return new CartResponse(cartItems);
     }
 
+    public void updateCartItemQuantity(String email, Long cartItemId, int quantity) {
+        // 1. 사용자 확인
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 2. 장바구니 아이템 조회
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new IllegalArgumentException("장바구니에 해당 상품이 없습니다."));
+
+        // 3. 해당 장바구니 아이템이 현재 로그인한 사용자의 것인지 확인
+        if (!cartItem.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("해당 장바구니 아이템에 접근할 권한이 없습니다.");
+        }
+
+        // 4. 수량 변경 (Dirty Checking)
+        cartItem.updateQuantity(quantity);
+    }
+
+    public void deleteCartItem(String email, Long cartItemId) {
+        // 1. 사용자 확인
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 2. 장바구니 아이템 조회
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new IllegalArgumentException("장바구니에 해당 상품이 없습니다."));
+
+        // 3. 해당 장바구니 아이템이 현재 로그인한 사용자의 것인지 확인
+        if (!cartItem.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("해당 장바구니 아이템에 접근할 권한이 없습니다.");
+        }
+
+        // 4. 해당 아이템 삭제
+        cartItemRepository.delete(cartItem);
+    }
 }
