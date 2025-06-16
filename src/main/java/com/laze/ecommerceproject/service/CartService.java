@@ -1,6 +1,7 @@
 package com.laze.ecommerceproject.service;
 
 import com.laze.ecommerceproject.controller.dto.CartItemAddRequest;
+import com.laze.ecommerceproject.controller.dto.CartResponse;
 import com.laze.ecommerceproject.domain.CartItem;
 import com.laze.ecommerceproject.domain.Product;
 import com.laze.ecommerceproject.domain.User;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,4 +48,14 @@ public class CartService {
             cartItemRepository.save(cartItem);
         }
     }
+
+    public CartResponse getCartItems(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
+
+        return new CartResponse(cartItems);
+    }
+
 }

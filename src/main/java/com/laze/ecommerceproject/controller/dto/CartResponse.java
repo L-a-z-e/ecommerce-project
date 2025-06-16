@@ -39,6 +39,7 @@ public class CartResponse {
     //            장점:
     //    독립성: 바깥 클래스와의 불필요한 연결이 끊어져 메모리 누수 걱정이 없어짐
     //    명확한 관계 표현: "나는 CartResponse와 논리적으로는 관련이 있지만, 기능적으로는 독립적인 클래스야" 라는 의미를 명확히 함
+    @Getter
     public static class CartItemResponse {
         private final Long id;
         private final Long productId;
