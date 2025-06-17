@@ -37,4 +37,14 @@ public class Product {
         this.stock = stock;
         this.attributes = attributes;
     }
+
+    public void removeStock(int quantity) {
+        int restStock = this.stock - quantity;
+
+        if (restStock < 0) {
+            throw new IllegalArgumentException("재고가 부족합니다.");
+        }
+
+        this.stock = restStock;
+    }
 }

@@ -43,4 +43,8 @@ public class User {
         this.role = UserRole.USER;
     }
 
+    public void removePoint(Long price) {
+        this.point -= price;
+    }
+
 }
