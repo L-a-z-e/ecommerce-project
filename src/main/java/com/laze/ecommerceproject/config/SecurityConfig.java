@@ -44,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/signup", "api/users/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/cart/items/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/cart/items/**").authenticated()
                         .requestMatchers("/api/cart/**").authenticated()
                         .anyRequest().authenticated()
                 )
@@ -56,7 +58,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:8081"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
