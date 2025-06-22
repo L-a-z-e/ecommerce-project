@@ -6,6 +6,20 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+@SqlResultSetMapping(
+        name = "ProductMapping", // 이 매핑 규칙의 고유한 이름
+        entities = @EntityResult(
+                entityClass = Product.class, // 결과를 이 엔티티 클래스로 매핑
+                fields = {
+                        // DB 컬럼명(column)과 엔티티 필드명(name)을 짝지어준다.
+                        @FieldResult(name = "id", column = "id"),
+                        @FieldResult(name = "productName", column = "product_name"),
+                        @FieldResult(name = "price", column = "price"),
+                        @FieldResult(name = "stock", column = "stock"),
+                        @FieldResult(name = "attributes", column = "attributes")
+                }
+        )
+)
 @Entity
 @Table(name = "products")
 @Getter
