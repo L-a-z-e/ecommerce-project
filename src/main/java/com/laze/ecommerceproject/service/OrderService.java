@@ -1,5 +1,6 @@
 package com.laze.ecommerceproject.service;
 
+import com.laze.ecommerceproject.controller.dto.OrderResponse;
 import com.laze.ecommerceproject.domain.*;
 import com.laze.ecommerceproject.repository.CartItemRepository;
 import com.laze.ecommerceproject.repository.OrderRepository;
@@ -9,9 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
 
@@ -19,6 +21,7 @@ public class OrderService {
     private final CartItemRepository cartItemRepository;
     private final OrderRepository orderRepository;
 
+    @Transactional
     public void createOrderFromCart(String email, String address) {
         // 1. 사용자 및 장바구니 정보 조회
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -58,5 +61,19 @@ public class OrderService {
 
         // 6. 장바구니 비우기
         cartItemRepository.deleteAll(cartItems);
+    }
+
+    public List<OrderResponse> getMyOrders(String email) {
+        // 1. 사용자 조회
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // 2. 해당 사용자의 모든 주문을 생성일 내림차순으로 조회
+        List<Order> orders = orderRepository.findByUserOrderByCreatedAtDesc(user);
+
+        //3 . 조회된 Order 리스트를 OrderResponse DTO로 변환
+        return orders.stream()
+                .map(OrderResponse::new)
+                .collect(Collectors.toList());
     }
 }
