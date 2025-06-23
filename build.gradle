@@ -30,6 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
     compileOnly 'org.projectlombok:lombok'
 
