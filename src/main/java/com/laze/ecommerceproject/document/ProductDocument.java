@@ -17,7 +17,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class ProductDocument {
 
     @Id
-    private Long Id;
+    private Long id;
 
     // text 타입: 전문(Full-text) 검색에 적합하도록 '분석(Analysis)' 과정을 거침
     // ex: "나이키 에어포스" -> "나이키", "에어", "포스" 로 쪼개서 저장
