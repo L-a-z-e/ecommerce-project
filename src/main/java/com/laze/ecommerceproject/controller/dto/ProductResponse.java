@@ -18,4 +18,12 @@ public class ProductResponse {
         this.stock = product.getStock();
         this.attributes = product.getAttributes();
     }
+
+    public ProductResponse(Long id, String productName, Long price) {
+        this.id = id;
+        this.productName = productName;
+        this.price = price;
+        this.stock = 0;
+        this.attributes = null;
+    }
 }

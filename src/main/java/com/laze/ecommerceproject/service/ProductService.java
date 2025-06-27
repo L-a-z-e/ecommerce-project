@@ -87,4 +87,18 @@ public class ProductService {
                 .map(ProductResponse::new)
                 .collect(Collectors.toList());
     }
+
+    public List<ProductResponse> searchProducts(String keyword) {
+        // 1. Elasticsearch에서 productName으로 검색
+        List<ProductDocument> documents = productSearchRepository.findByProductNameContaining(keyword);
+
+        // 2. 검색 결과(ProductDocument)를 ProductResponse 리스트로 변환
+        return documents.stream()
+                .map(this::convertDocumentToResponse)
+                .collect(Collectors.toList());
+    }
+
+    private ProductResponse convertDocumentToResponse(ProductDocument document) {
+        return new ProductResponse(document.getId(), document.getProductName(), document.getPrice());
+    }
 }

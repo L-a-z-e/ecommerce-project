@@ -40,4 +40,9 @@ public class ProductController {
     ) {
         return productService.getProductsWithFilters(brand, minPrice, maxPrice);
     }
+
+    @GetMapping("/search")
+    public List<ProductResponse> searchProducts(@RequestParam String keyword) {
+        return productService.searchProducts(keyword);
+    }
 }
