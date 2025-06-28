@@ -7,9 +7,15 @@ import com.laze.ecommerceproject.controller.dto.ProductCreateRequest;
 import com.laze.ecommerceproject.controller.dto.ProductResponse;
 import com.laze.ecommerceproject.document.ProductDocument;
 import com.laze.ecommerceproject.domain.Product;
+import com.laze.ecommerceproject.domain.ProductViewLog;
+import com.laze.ecommerceproject.domain.User;
 import com.laze.ecommerceproject.esrepository.ProductSearchRepository;
 import com.laze.ecommerceproject.repository.ProductRepository;
+import com.laze.ecommerceproject.repository.ProductViewLogRepository;
+import com.laze.ecommerceproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +30,8 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductSearchRepository productSearchRepository;
+    private final UserRepository userRepository;
+    private  final ProductViewLogRepository productViewLogRepository;
     private final ObjectMapper objectMapper;
 
     @Transactional
@@ -69,9 +77,29 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Product not found id: " + id));
+
+        // Log 기록
+        logProductView(product);
         return new ProductResponse(product);
+    }
+
+    private void logProductView(Product product) {
+        // 현재 SecurityContext에서 인증 정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = null;
+
+        // 인증 정보가 있고, 익명 사용자가 아닌 경우에만 사용자 정보를 조회
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
+            String email = (String) authentication.getPrincipal();
+            user = userRepository.findByEmail(email).orElse(null);
+        }
+
+        // ProductViewLog 엔티티를 생성하고 저장
+        ProductViewLog log = new ProductViewLog(user, product);
+        productViewLogRepository.save(log);
     }
 
     private String convertMapToJson(Map<String, Object> attributes) {
