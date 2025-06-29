@@ -45,4 +45,9 @@ public class ProductController {
     public List<ProductResponse> searchProducts(@RequestParam String keyword) {
         return productService.searchProducts(keyword);
     }
+
+    @GetMapping("/{id}/recommendations")
+    public List<ProductResponse> getRecommendedProducts(@PathVariable Long id) {
+        return productService.getRecommendProducts(id);
+    }
 }

@@ -129,4 +129,13 @@ public class ProductService {
     private ProductResponse convertDocumentToResponse(ProductDocument document) {
         return new ProductResponse(document.getId(), document.getProductName(), document.getPrice());
     }
+
+    public List<ProductResponse> getRecommendProducts(Long productId) {
+        int limit = 5;
+        List<Product> recommendedProducts = productRepository.findRecommendations(productId, limit);
+
+        return recommendedProducts.stream()
+                .map(ProductResponse::new)
+                .collect(Collectors.toList());
+    }
 }

@@ -1,9 +1,6 @@
 package com.laze.ecommerceproject.repository;
 
 import com.laze.ecommerceproject.domain.Product;
-import jakarta.persistence.EntityResult;
-import jakarta.persistence.FieldResult;
-import jakarta.persistence.SqlResultSetMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +20,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     + "(:maxPrice is null OR p.price <= :maxPrice)",
     nativeQuery = true)
     List<Product> findWithFilters(@Param("brand") String brand, @Param("minPrice") Long minPrice, @Param("maxPrice") Long maxPrice);
+
+    @Query(value =
+        "SELECT p.* FROM products p WHERE p.id IN ( " +
+        " SELECT pvl2.product_id " +
+        " FROM product_view_logs pvl1 " +
+        " JOIN product_view_logs pvl2 ON pvl1.user_id = pvl2.user_id " +
+        " AND pvl1.user_id IS NOT NULL " +
+        " AND pvl2.product_id != :productId " +
+        " GROUP BY pvl2.product_id " +
+        " ORDER BY COUNT(pvl2.product_id) DESC, pvl2.product_id ASC " +
+        " LIMIT :limit " +
+        ")",
+        nativeQuery = true
+    )
+    List<Product> findRecommendations(@Param("productId") Long productId, @Param("limit") int limit);
 }
