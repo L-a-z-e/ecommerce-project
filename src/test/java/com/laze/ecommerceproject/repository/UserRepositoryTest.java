@@ -1,8 +1,6 @@
 package com.laze.ecommerceproject.repository;
 
-import com.laze.ecommerceproject.common.EnvLoader;
 import com.laze.ecommerceproject.domain.User;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,11 +17,6 @@ public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @BeforeAll
-    static void setup() {
-        new EnvLoader(); // .env를 시스템 변수로 올림
-    }
 
     @Test
     void testingCreateUserFindUser() {
